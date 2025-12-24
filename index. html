@@ -204,6 +204,71 @@
             z-index: 1000;
             animation: pulse 2s infinite;
         }
+        
+        /* Styles pour les nouveaux onglets */
+        .absence-type-C { background: #f59e0b; color: white; }
+        .absence-type-M { background: #ef4444; color: white; }
+        .absence-type-A { background: #8b5cf6; color: white; }
+        
+        /* Styles pour les formulaires */
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+        }
+        .form-section h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--dark);
+            font-size: 16px;
+        }
+        
+        /* Boutons spécifiques */
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        /* Historique */
+        .historique-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3b82f6;
+        }
+        .historique-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-tab {
+                padding: 12px 5px;
+                font-size: 12px;
+                min-width: 80px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-card {
+                padding: 15px;
+            }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -232,7 +297,10 @@
             <button class="nav-tab" data-tab="planning">Planning</button>
             <button class="nav-tab" data-tab="agents">Agents</button>
             <button class="nav-tab" data-tab="add">Ajouter</button>
-            <button class="nav-tab" data-tab="stats">Statistiques</button>
+            <!-- NOUVEAUX ONGLETS AJOUTÉS -->
+            <button class="nav-tab" data-tab="absences">Congés/Absences</button>
+            <button class="nav-tab" data-tab="echanges">Échanges</button>
+            <button class="nav-tab" data-tab="stats">Stats</button>
             <button class="nav-tab" data-tab="export">Export</button>
         </nav>
         
@@ -355,6 +423,120 @@
             </div>
         </div>
         
+        <!-- Congés/Absences Tab - NOUVELLE SECTION -->
+        <div id="absences-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">📋 Gestion des Congés et Absences</h3>
+                
+                <!-- Formulaire congés période -->
+                <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h4 style="color: #0ea5e9; margin-bottom: 15px;">📅 Congés par Période</h4>
+                    <div class="input-group">
+                        <label for="absence-agent">Agent *</label>
+                        <select id="absence-agent" style="width: 100%;">
+                            <option value="">Sélectionner un agent</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label for="date-debut">Date début *</label>
+                            <input type="date" id="date-debut">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label for="date-fin">Date fin *</label>
+                            <input type="date" id="date-fin">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="ajouterCongePeriode()" style="background: #0ea5e9;">
+                        ✅ Ajouter congé période
+                    </button>
+                </div>
+                
+                <!-- Formulaire absence ponctuelle -->
+                <div style="background: #fef2f2; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h4 style="color: #ef4444; margin-bottom: 15px;">⚠️ Absence Ponctuelle</h4>
+                    <div class="input-group">
+                        <label for="absence-ponctuelle-agent">Agent *</label>
+                        <select id="absence-ponctuelle-agent" style="width: 100%;">
+                            <option value="">Sélectionner un agent</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="absence-date">Date *</label>
+                        <input type="date" id="absence-date">
+                    </div>
+                    <div class="input-group">
+                        <label for="type-absence">Type d'absence *</label>
+                        <select id="type-absence" style="width: 100%;">
+                            <option value="">Sélectionner type</option>
+                            <option value="C">Congé (C)</option>
+                            <option value="M">Maladie (M)</option>
+                            <option value="A">Autre absence (A)</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="ajouterAbsencePonctuelle()" style="background: #ef4444;">
+                        ⚠️ Enregistrer absence
+                    </button>
+                </div>
+                
+                <!-- Liste des congés en cours -->
+                <div id="liste-conges" style="margin-top: 20px;">
+                    <h4 style="margin-bottom: 15px;">📋 Congés enregistrés</h4>
+                    <!-- Liste des congés -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Échanges Tab - NOUVELLE SECTION -->
+        <div id="echanges-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">🔄 Échange de Shifts</h3>
+                
+                <!-- Formulaire échange -->
+                <div style="background: #f0fdf4; padding: 20px; border-radius: 12px;">
+                    <div class="input-group">
+                        <label for="echange-agent1">Agent 1 *</label>
+                        <select id="echange-agent1" style="width: 100%;">
+                            <option value="">Sélectionner agent 1</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="echange-agent2">Agent 2 *</label>
+                        <select id="echange-agent2" style="width: 100%;">
+                            <option value="">Sélectionner agent 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="echange-date">Date d'échange *</label>
+                        <input type="date" id="echange-date">
+                    </div>
+                    
+                    <!-- Aperçu avant échange -->
+                    <div id="apercu-echange" style="margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 10px; display: none;">
+                        <h5 style="margin-bottom: 10px;">🔄 Aperçu de l'échange</h5>
+                        <div id="details-echange"></div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="previsualiserEchange()" style="background: #f59e0b; flex: 1;">
+                            👁️ Prévisualiser
+                        </button>
+                        <button class="btn" onclick="validerEchange()" style="background: #10b981; flex: 1;">
+                            ✅ Valider l'échange
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Historique des échanges -->
+                <div id="historique-echanges" style="margin-top: 30px;">
+                    <h4 style="margin-bottom: 15px;">📝 Historique des échanges</h4>
+                    <!-- Historique -->
+                </div>
+            </div>
+        </div>
+        
         <!-- Statistics Tab -->
         <div id="stats-tab" class="tab-content">
             <div class="form-card">
@@ -365,26 +547,57 @@
             </div>
         </div>
         
-        <!-- Export Tab -->
+        <!-- Export Tab - MISE À JOUR -->
         <div id="export-tab" class="tab-content">
             <div class="form-card">
-                <h3 style="margin-bottom: 20px; color: var(--dark);">📤 Export des Données</h3>
+                <h3 style="margin-bottom: 20px; color: var(--dark);">📤 Export Complet des Données</h3>
+                
                 <div style="display: grid; gap: 15px;">
-                    <button class="btn btn-primary" onclick="exportToJSON()">
-                        💾 Exporter JSON
+                    <!-- Export Excel complet -->
+                    <button class="btn" onclick="exporterExcelComplet()" style="background: #059669;">
+                        📊 Export Excel COMPLET
                     </button>
-                    <button class="btn btn-primary" onclick="exportToCSV()">
-                        📊 Exporter CSV
+                    
+                    <!-- Export Planning mensuel -->
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
+                        <h5 style="margin-bottom: 10px;">📅 Export Planning Mensuel</h5>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <select id="export-mois" style="flex: 1;">
+                                <option value="1">Janvier</option><option value="2">Février</option>
+                                <option value="3">Mars</option><option value="4">Avril</option>
+                                <option value="5">Mai</option><option value="6">Juin</option>
+                                <option value="7">Juillet</option><option value="8">Août</option>
+                                <option value="9">Septembre</option><option value="10">Octobre</option>
+                                <option value="11">Novembre</option><option value="12">Décembre</option>
+                            </select>
+                            <select id="export-annee" style="flex: 1;">
+                                <option value="2026" selected>2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="exporterPlanningMensuel()" style="background: #3b82f6;">
+                            📋 Exporter ce planning
+                        </button>
+                    </div>
+                    
+                    <!-- Export Statistiques -->
+                    <button class="btn" onclick="exporterStatistiques()" style="background: #8b5cf6;">
+                        📈 Export Statistiques
                     </button>
-                    <button class="btn btn-primary" onclick="exportToExcel()">
-                        📈 Exporter Excel
+                    
+                    <!-- Backup JSON -->
+                    <button class="btn" onclick="exporterBackupJSON()" style="background: #64748b;">
+                        💾 Backup JSON
                     </button>
-                    <button class="btn btn-secondary" onclick="importFromJSON()">
-                        📥 Importer JSON
-                    </button>
-                    <button class="btn" style="background: var(--danger); color: white;" onclick="clearAllData()">
-                        🗑️ Effacer toutes les données
-                    </button>
+                    
+                    <!-- Import -->
+                    <div style="background: #fef2f2; padding: 15px; border-radius: 10px; margin-top: 10px;">
+                        <h5 style="margin-bottom: 10px; color: #dc2626;">📥 Import de données</h5>
+                        <button class="btn" onclick="importerBackupJSON()" style="background: #dc2626;">
+                            ⚠️ Restaurer backup
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -392,6 +605,8 @@
     
     <button id="install-button" class="install-btn" style="display: none;">📲</button>
     
+    <!-- Scripts dans l'ordre correct -->
+    <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
