@@ -1,7 +1,16 @@
 {
-    "rewrites": [
-        { "source": "/(.*)", "destination": "/index.html" }
-    ],
+    "version": 2,
     "buildCommand": null,
-    "outputDirectory": "."
+    "outputDirectory": ".",
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Content-Type",
+                    "value": "text/html; charset=UTF-8"
+                }
+            ]
+        }
+    ]
 }
