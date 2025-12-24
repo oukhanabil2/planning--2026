@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <title>Planning Agents 2026</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%232563eb%22>📅</text></svg>">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #059669;
+            --danger: #dc2626;
+            --light: #f8fafc;
+            --dark: #1e293b;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .app-container {
+            max-width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .app-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .app-subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .nav-tabs {
+            display: flex;
+            background: #f1f5f9;
+            padding: 5px;
+            overflow-x: auto;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 15px 10px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .nav-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        .planning-grid {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        .planning-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        .planning-table th {
+            background: #f8fafc;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 3px solid #e2e8f0;
+        }
+        .planning-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #f1f5f9;
+        }
+        .shift-badge {
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            display: inline-block;
+            min-width: 30px;
+        }
+        .shift-1 { background: #3b82f6; color: white; }
+        .shift-2 { background: #10b981; color: white; }
+        .shift-3 { background: #8b5cf6; color: white; }
+        .shift-R { background: #94a3b8; color: white; }
+        .shift-C { background: #f59e0b; color: white; }
+        .shift-F { background: #ef4444; color: white; }
+        .install-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .nav-tab { padding: 12px 8px; font-size: 13px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <h1 class="app-title">📅 PLANNING 2026</h1>
+            <p class="app-subtitle">Gestion des agents de sécurité - PWA</p>
+        </div>
+        
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-tab" data-tab="planning">Planning</button>
+            <button class="nav-tab" data-tab="agents">Agents</button>
+            <button class="nav-tab" data-tab="add">Ajouter</button>
+            <button class="nav-tab" data-tab="stats">Statistiques</button>
+            <button class="nav-tab" data-tab="export">Export</button>
+        </nav>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">📊 Vue d'ensemble</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>👥 Agents Actifs</div>
+                        <div class="stat-value" id="total-agents">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>📅 Présents Aujourd'hui</div>
+                        <div class="stat-value" id="present-today">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>🔄 Groupes</div>
+                        <div class="stat-value" id="total-groupes">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>✅ En service</div>
+                        <div class="stat-value" id="en-service">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-card">
+                <h3 style="margin-bottom: 15px; color: var(--dark);">📋 Actions rapides</h3>
+                <button class="btn btn-primary" onclick="showTab('add')" style="margin-bottom: 10px;">
+                    ➕ Ajouter un agent
+                </button>
+                <button class="btn btn-secondary" onclick="exportToExcel()">
+                    📤 Exporter Excel
+                </button>
+            </div>
+        </div>
+        
+        <!-- Planning Tab -->
+        <div id="planning-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 15px; color: var(--dark);">📅 Planning Mensuel</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                        <select id="month-select" style="width: 100%;">
+                            <option value="1">Janvier</option><option value="2">Février</option>
+                            <option value="3">Mars</option><option value="4">Avril</option>
+                            <option value="5">Mai</option><option value="6">Juin</option>
+                            <option value="7">Juillet</option><option value="8">Août</option>
+                            <option value="9">Septembre</option><option value="10">Octobre</option>
+                            <option value="11">Novembre</option><option value="12">Décembre</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                        <select id="year-select" style="width: 100%;">
+                            <option value="2024">2024</option><option value="2025">2025</option>
+                            <option value="2026" selected>2026</option><option value="2027">2027</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 150px;">
+                        <select id="groupe-select" style="width: 100%;">
+                            <option value="all">Tous groupes</option>
+                            <option value="A">Groupe A</option><option value="B">Groupe B</option>
+                            <option value="C">Groupe C</option><option value="D">Groupe D</option>
+                            <option value="E">Groupe E</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="planning-result" class="planning-grid">
+                    <!-- Planning sera généré ici -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agents Tab -->
+        <div id="agents-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">👥 Liste des Agents</h3>
+                <div id="agents-list">
+                    <!-- Liste des agents -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Agent Tab -->
+        <div id="add-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">➕ Ajouter un Agent</h3>
+                <div class="input-group">
+                    <label for="code-agent">Code Agent *</label>
+                    <input type="text" id="code-agent" placeholder="Ex: A01, B12, E05" required>
+                </div>
+                <div class="input-group">
+                    <label for="nom-agent">Nom *</label>
+                    <input type="text" id="nom-agent" placeholder="Nom de famille" required>
+                </div>
+                <div class="input-group">
+                    <label for="prenom-agent">Prénom *</label>
+                    <input type="text" id="prenom-agent" placeholder="Prénom" required>
+                </div>
+                <div class="input-group">
+                    <label for="groupe-agent">Groupe *</label>
+                    <select id="groupe-agent" required>
+                        <option value="">Sélectionner un groupe</option>
+                        <option value="A">Groupe A (Rotation 8j)</option>
+                        <option value="B">Groupe B (Rotation 8j)</option>
+                        <option value="C">Groupe C (Rotation 8j)</option>
+                        <option value="D">Groupe D (Rotation 8j)</option>
+                        <option value="E">Groupe E (5/7 Spécial)</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="addAgent()" style="flex: 2;">
+                        💾 Enregistrer l'agent
+                    </button>
+                    <button class="btn btn-secondary" onclick="showTab('agents')" style="flex: 1;">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Tab -->
+        <div id="stats-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">📊 Statistiques Détaillées</h3>
+                <div id="stats-result">
+                    <!-- Statistiques -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Export Tab -->
+        <div id="export-tab" class="tab-content">
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: var(--dark);">📤 Export des Données</h3>
+                <div style="display: grid; gap: 15px;">
+                    <button class="btn btn-primary" onclick="exportToJSON()">
+                        💾 Exporter JSON
+                    </button>
+                    <button class="btn btn-primary" onclick="exportToCSV()">
+                        📊 Exporter CSV
+                    </button>
+                    <button class="btn btn-primary" onclick="exportToExcel()">
+                        📈 Exporter Excel
+                    </button>
+                    <button class="btn btn-secondary" onclick="importFromJSON()">
+                        📥 Importer JSON
+                    </button>
+                    <button class="btn" style="background: var(--danger); color: white;" onclick="clearAllData()">
+                        🗑️ Effacer toutes les données
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button id="install-button" class="install-btn" style="display: none;">📲</button>
+    
+    <script src="app.js"></script>
+</body>
+</html>
