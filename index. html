@@ -13,6 +13,7 @@
             --secondary: #7c3aed;
             --success: #059669;
             --danger: #dc2626;
+            --warning: #d97706;
             --light: #f8fafc;
             --dark: #1e293b;
         }
@@ -134,6 +135,9 @@
             background: #64748b;
             color: white;
         }
+        .btn-secondary:hover {
+            background: #475569;
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -169,12 +173,19 @@
             font-weight: 600;
             color: var(--dark);
             border-bottom: 3px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .planning-table td {
             padding: 12px 8px;
             text-align: center;
             border: 1px solid #f1f5f9;
         }
+        .planning-table tr:hover td {
+            background: #f8fafc;
+        }
+        /* BADGES DE SHIFTS COMPLETS - CORRIGÉS */
         .shift-badge {
             padding: 6px 10px;
             border-radius: 8px;
@@ -182,13 +193,22 @@
             font-size: 12px;
             display: inline-block;
             min-width: 30px;
+            color: white;
         }
-        .shift-1 { background: #3b82f6; color: white; }
-        .shift-2 { background: #10b981; color: white; }
-        .shift-3 { background: #8b5cf6; color: white; }
-        .shift-R { background: #94a3b8; color: white; }
-        .shift-C { background: #f59e0b; color: white; }
-        .shift-F { background: #ef4444; color: white; }
+        .shift-1 { background: #3b82f6; } /* Bleu - Matin */
+        .shift-2 { background: #10b981; } /* Vert - Après-midi */
+        .shift-3 { background: #8b5cf6; } /* Violet - Nuit */
+        .shift-R { background: #64748b; } /* Gris - Repos */
+        .shift-C { background: #f59e0b; } /* Orange - Congé */
+        .shift-F { background: #d97706; } /* Orange foncé - Férié */
+        .shift-M { background: #ef4444; } /* Rouge - Maladie */
+        .shift-A { background: #8b5cf6; } /* Violet - Autre absence */
+        .shift-- { 
+            background: #f1f5f9; 
+            color: #64748b; 
+            border: 1px dashed #cbd5e1; 
+        }
+        
         .install-btn {
             position: fixed;
             bottom: 25px;
@@ -203,14 +223,10 @@
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
             z-index: 1000;
             animation: pulse 2s infinite;
+            cursor: pointer;
         }
         
-        /* Styles pour les nouveaux onglets */
-        .absence-type-C { background: #f59e0b; color: white; }
-        .absence-type-M { background: #ef4444; color: white; }
-        .absence-type-A { background: #8b5cf6; color: white; }
-        
-        /* Styles pour les formulaires */
+        /* NOUVEAUX STYLES POUR LES FORMULAIRES CONGÉS ET FÉRIÉS */
         .form-section {
             background: white;
             padding: 20px;
@@ -225,7 +241,6 @@
             font-size: 16px;
         }
         
-        /* Boutons spécifiques */
         .btn-warning {
             background: #f59e0b;
             color: white;
@@ -241,17 +256,52 @@
             background: #059669;
         }
         
-        /* Historique */
-        .historique-item {
-            background: white;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #3b82f6;
+        /* LÉGENDE DES SHIFTS */
+        .legend-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
         }
-        .historique-date {
-            font-size: 12px;
-            color: #64748b;
+        
+        /* STYLES POUR LES JOURS FÉRIÉS */
+        .ferie-fixe {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            font-weight: bold;
+        }
+        
+        .ferie-manuel {
+            background: #fce7f3 !important;
+            color: #be185d !important;
+            font-weight: bold;
+        }
+        
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 500px;
+            margin: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
         
         /* Responsive */
@@ -267,6 +317,27 @@
             .form-card {
                 padding: 15px;
             }
+            .planning-table {
+                min-width: 800px;
+            }
+            body {
+                padding: 10px;
+            }
+            .tab-content {
+                padding: 15px;
+            }
+        }
+        
+        /* Pour les très petits écrans */
+        @media (max-width: 480px) {
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            .nav-tab {
+                min-width: 70px;
+                padding: 10px 5px;
+                font-size: 11px;
+            }
         }
         
         @keyframes fadeIn {
@@ -277,11 +348,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .nav-tab { padding: 12px 8px; font-size: 13px; }
-            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -297,11 +363,9 @@
             <button class="nav-tab" data-tab="planning">Planning</button>
             <button class="nav-tab" data-tab="agents">Agents</button>
             <button class="nav-tab" data-tab="add">Ajouter</button>
-            <!-- NOUVEAUX ONGLETS AJOUTÉS -->
-            <button class="nav-tab" data-tab="absences">Congés/Absences</button>
-            <button class="nav-tab" data-tab="echanges">Échanges</button>
-            <button class="nav-tab" data-tab="stats">Stats</button>
-            <button class="nav-tab" data-tab="export">Export</button>
+            <button class="nav-tab" data-tab="conges">Congés</button>
+            <button class="nav-tab" data-tab="feries">Jours Fériés</button>
+            <button class="nav-tab" data-tab="stats">Statistiques</button>
         </nav>
         
         <!-- Dashboard Tab -->
@@ -326,6 +390,10 @@
                         <div class="stat-value" id="en-service">0</div>
                     </div>
                 </div>
+                
+                <div id="groupes-stats" style="margin-top: 20px; text-align: center;">
+                    <!-- Stats par groupe seront ajoutées ici -->
+                </div>
             </div>
             
             <div class="form-card">
@@ -345,26 +413,39 @@
                 <h3 style="margin-bottom: 15px; color: var(--dark);">📅 Planning Mensuel</h3>
                 <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                     <div class="input-group" style="flex: 1; min-width: 150px;">
-                        <select id="month-select" style="width: 100%;">
-                            <option value="1">Janvier</option><option value="2">Février</option>
-                            <option value="3">Mars</option><option value="4">Avril</option>
-                            <option value="5">Mai</option><option value="6">Juin</option>
-                            <option value="7">Juillet</option><option value="8">Août</option>
-                            <option value="9">Septembre</option><option value="10">Octobre</option>
-                            <option value="11">Novembre</option><option value="12">Décembre</option>
+                        <label for="month-select">Mois</label>
+                        <select id="month-select">
+                            <option value="1">Janvier</option>
+                            <option value="2">Février</option>
+                            <option value="3">Mars</option>
+                            <option value="4">Avril</option>
+                            <option value="5">Mai</option>
+                            <option value="6">Juin</option>
+                            <option value="7">Juillet</option>
+                            <option value="8">Août</option>
+                            <option value="9">Septembre</option>
+                            <option value="10">Octobre</option>
+                            <option value="11">Novembre</option>
+                            <option value="12">Décembre</option>
                         </select>
                     </div>
                     <div class="input-group" style="flex: 1; min-width: 150px;">
-                        <select id="year-select" style="width: 100%;">
-                            <option value="2024">2024</option><option value="2025">2025</option>
-                            <option value="2026" selected>2026</option><option value="2027">2027</option>
+                        <label for="year-select">Année</label>
+                        <select id="year-select">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
                         </select>
                     </div>
                     <div class="input-group" style="flex: 1; min-width: 150px;">
-                        <select id="groupe-select" style="width: 100%;">
+                        <label for="groupe-select">Groupe</label>
+                        <select id="groupe-select">
                             <option value="all">Tous groupes</option>
-                            <option value="A">Groupe A</option><option value="B">Groupe B</option>
-                            <option value="C">Groupe C</option><option value="D">Groupe D</option>
+                            <option value="A">Groupe A</option>
+                            <option value="B">Groupe B</option>
+                            <option value="C">Groupe C</option>
+                            <option value="D">Groupe D</option>
                             <option value="E">Groupe E</option>
                         </select>
                     </div>
@@ -389,155 +470,53 @@
         <div id="add-tab" class="tab-content">
             <div class="form-card">
                 <h3 style="margin-bottom: 20px; color: var(--dark);">➕ Ajouter un Agent</h3>
-                <div class="input-group">
-                    <label for="code-agent">Code Agent *</label>
-                    <input type="text" id="code-agent" placeholder="Ex: A01, B12, E05" required>
-                </div>
-                <div class="input-group">
-                    <label for="nom-agent">Nom *</label>
-                    <input type="text" id="nom-agent" placeholder="Nom de famille" required>
-                </div>
-                <div class="input-group">
-                    <label for="prenom-agent">Prénom *</label>
-                    <input type="text" id="prenom-agent" placeholder="Prénom" required>
-                </div>
-                <div class="input-group">
-                    <label for="groupe-agent">Groupe *</label>
-                    <select id="groupe-agent" required>
-                        <option value="">Sélectionner un groupe</option>
-                        <option value="A">Groupe A (Rotation 8j)</option>
-                        <option value="B">Groupe B (Rotation 8j)</option>
-                        <option value="C">Groupe C (Rotation 8j)</option>
-                        <option value="D">Groupe D (Rotation 8j)</option>
-                        <option value="E">Groupe E (5/7 Spécial)</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="addAgent()" style="flex: 2;">
-                        💾 Enregistrer l'agent
-                    </button>
-                    <button class="btn btn-secondary" onclick="showTab('agents')" style="flex: 1;">
-                        Annuler
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Congés/Absences Tab - NOUVELLE SECTION -->
-        <div id="absences-tab" class="tab-content">
-            <div class="form-card">
-                <h3 style="margin-bottom: 20px; color: var(--dark);">📋 Gestion des Congés et Absences</h3>
-                
-                <!-- Formulaire congés période -->
-                <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                    <h4 style="color: #0ea5e9; margin-bottom: 15px;">📅 Congés par Période</h4>
+                <form id="agent-form">
                     <div class="input-group">
-                        <label for="absence-agent">Agent *</label>
-                        <select id="absence-agent" style="width: 100%;">
-                            <option value="">Sélectionner un agent</option>
+                        <label for="code-agent">Code Agent *</label>
+                        <input type="text" id="code-agent" placeholder="Ex: A01, B12, E05" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="nom-agent">Nom *</label>
+                        <input type="text" id="nom-agent" placeholder="Nom de famille" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="prenom-agent">Prénom *</label>
+                        <input type="text" id="prenom-agent" placeholder="Prénom" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="groupe-agent">Groupe *</label>
+                        <select id="groupe-agent" required>
+                            <option value="">Sélectionner un groupe</option>
+                            <option value="A">Groupe A (Rotation 8j)</option>
+                            <option value="B">Groupe B (Rotation 8j)</option>
+                            <option value="C">Groupe C (Rotation 8j)</option>
+                            <option value="D">Groupe D (Rotation 8j)</option>
+                            <option value="E">Groupe E (5/7 Spécial)</option>
                         </select>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <div class="input-group" style="flex: 1;">
-                            <label for="date-debut">Date début *</label>
-                            <input type="date" id="date-debut">
-                        </div>
-                        <div class="input-group" style="flex: 1;">
-                            <label for="date-fin">Date fin *</label>
-                            <input type="date" id="date-fin">
-                        </div>
-                    </div>
-                    <button class="btn" onclick="ajouterCongePeriode()" style="background: #0ea5e9;">
-                        ✅ Ajouter congé période
-                    </button>
-                </div>
-                
-                <!-- Formulaire absence ponctuelle -->
-                <div style="background: #fef2f2; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                    <h4 style="color: #ef4444; margin-bottom: 15px;">⚠️ Absence Ponctuelle</h4>
-                    <div class="input-group">
-                        <label for="absence-ponctuelle-agent">Agent *</label>
-                        <select id="absence-ponctuelle-agent" style="width: 100%;">
-                            <option value="">Sélectionner un agent</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="absence-date">Date *</label>
-                        <input type="date" id="absence-date">
-                    </div>
-                    <div class="input-group">
-                        <label for="type-absence">Type d'absence *</label>
-                        <select id="type-absence" style="width: 100%;">
-                            <option value="">Sélectionner type</option>
-                            <option value="C">Congé (C)</option>
-                            <option value="M">Maladie (M)</option>
-                            <option value="A">Autre absence (A)</option>
-                        </select>
-                    </div>
-                    <button class="btn" onclick="ajouterAbsencePonctuelle()" style="background: #ef4444;">
-                        ⚠️ Enregistrer absence
-                    </button>
-                </div>
-                
-                <!-- Liste des congés en cours -->
-                <div id="liste-conges" style="margin-top: 20px;">
-                    <h4 style="margin-bottom: 15px;">📋 Congés enregistrés</h4>
-                    <!-- Liste des congés -->
-                </div>
-            </div>
-        </div>
-        
-        <!-- Échanges Tab - NOUVELLE SECTION -->
-        <div id="echanges-tab" class="tab-content">
-            <div class="form-card">
-                <h3 style="margin-bottom: 20px; color: var(--dark);">🔄 Échange de Shifts</h3>
-                
-                <!-- Formulaire échange -->
-                <div style="background: #f0fdf4; padding: 20px; border-radius: 12px;">
-                    <div class="input-group">
-                        <label for="echange-agent1">Agent 1 *</label>
-                        <select id="echange-agent1" style="width: 100%;">
-                            <option value="">Sélectionner agent 1</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="echange-agent2">Agent 2 *</label>
-                        <select id="echange-agent2" style="width: 100%;">
-                            <option value="">Sélectionner agent 2</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label for="echange-date">Date d'échange *</label>
-                        <input type="date" id="echange-date">
-                    </div>
-                    
-                    <!-- Aperçu avant échange -->
-                    <div id="apercu-echange" style="margin: 20px 0; padding: 15px; background: #f8fafc; border-radius: 10px; display: none;">
-                        <h5 style="margin-bottom: 10px;">🔄 Aperçu de l'échange</h5>
-                        <div id="details-echange"></div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn" onclick="previsualiserEchange()" style="background: #f59e0b; flex: 1;">
-                            👁️ Prévisualiser
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 2;">
+                            💾 Enregistrer l'agent
                         </button>
-                        <button class="btn" onclick="validerEchange()" style="background: #10b981; flex: 1;">
-                            ✅ Valider l'échange
+                        <button type="button" class="btn btn-secondary" onclick="showTab('agents')" style="flex: 1;">
+                            Annuler
                         </button>
                     </div>
-                </div>
-                
-                <!-- Historique des échanges -->
-                <div id="historique-echanges" style="margin-top: 30px;">
-                    <h4 style="margin-bottom: 15px;">📝 Historique des échanges</h4>
-                    <!-- Historique -->
-                </div>
+                </form>
             </div>
         </div>
         
-        <!-- Statistics Tab -->
+        <!-- Congés Tab -->
+        <div id="conges-tab" class="tab-content">
+            <!-- Contenu généré dynamiquement par app.js -->
+        </div>
+        
+        <!-- Jours Fériés Tab -->
+        <div id="feries-tab" class="tab-content">
+            <!-- Contenu généré dynamiquement par app.js -->
+        </div>
+        
+        <!-- Statistiques Tab -->
         <div id="stats-tab" class="tab-content">
             <div class="form-card">
                 <h3 style="margin-bottom: 20px; color: var(--dark);">📊 Statistiques Détaillées</h3>
@@ -546,67 +525,58 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Export Tab - MISE À JOUR -->
-        <div id="export-tab" class="tab-content">
-            <div class="form-card">
-                <h3 style="margin-bottom: 20px; color: var(--dark);">📤 Export Complet des Données</h3>
-                
-                <div style="display: grid; gap: 15px;">
-                    <!-- Export Excel complet -->
-                    <button class="btn" onclick="exporterExcelComplet()" style="background: #059669;">
-                        📊 Export Excel COMPLET
-                    </button>
-                    
-                    <!-- Export Planning mensuel -->
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 10px;">
-                        <h5 style="margin-bottom: 10px;">📅 Export Planning Mensuel</h5>
-                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <select id="export-mois" style="flex: 1;">
-                                <option value="1">Janvier</option><option value="2">Février</option>
-                                <option value="3">Mars</option><option value="4">Avril</option>
-                                <option value="5">Mai</option><option value="6">Juin</option>
-                                <option value="7">Juillet</option><option value="8">Août</option>
-                                <option value="9">Septembre</option><option value="10">Octobre</option>
-                                <option value="11">Novembre</option><option value="12">Décembre</option>
-                            </select>
-                            <select id="export-annee" style="flex: 1;">
-                                <option value="2026" selected>2026</option>
-                                <option value="2025">2025</option>
-                                <option value="2027">2027</option>
-                            </select>
-                        </div>
-                        <button class="btn" onclick="exporterPlanningMensuel()" style="background: #3b82f6;">
-                            📋 Exporter ce planning
-                        </button>
-                    </div>
-                    
-                    <!-- Export Statistiques -->
-                    <button class="btn" onclick="exporterStatistiques()" style="background: #8b5cf6;">
-                        📈 Export Statistiques
-                    </button>
-                    
-                    <!-- Backup JSON -->
-                    <button class="btn" onclick="exporterBackupJSON()" style="background: #64748b;">
-                        💾 Backup JSON
-                    </button>
-                    
-                    <!-- Import -->
-                    <div style="background: #fef2f2; padding: 15px; border-radius: 10px; margin-top: 10px;">
-                        <h5 style="margin-bottom: 10px; color: #dc2626;">📥 Import de données</h5>
-                        <button class="btn" onclick="importerBackupJSON()" style="background: #dc2626;">
-                            ⚠️ Restaurer backup
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     
-    <button id="install-button" class="install-btn" style="display: none;">📲</button>
+    <button id="install-button" class="install-btn" style="display: none;" onclick="installPWA()">📲</button>
     
-    <!-- Scripts dans l'ordre correct -->
+    <!-- Scripts -->
     <script src="data.js"></script>
     <script src="app.js"></script>
+    
+    <script>
+        // Gestion de l'installation PWA
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+                installButton.style.display = 'block';
+            }
+        });
+        
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWA installé');
+                    }
+                    deferredPrompt = null;
+                    const installButton = document.getElementById('install-button');
+                    if (installButton) {
+                        installButton.style.display = 'none';
+                    }
+                });
+            }
+        }
+        
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA installé avec succès');
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+        });
+        
+        // Vérifier si on est en PWA
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
