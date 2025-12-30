@@ -4,6 +4,7 @@ const urlsToCache = [
     '/',
     '/index.html',
     '/app.js',
+    '/data.js',
     '/manifest.json'
 ];
 
@@ -12,7 +13,7 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Cache ouvert');
+                console.log('✅ Cache ouvert et prêt');
                 return cache.addAll(urlsToCache);
             })
     );
@@ -25,7 +26,7 @@ self.addEventListener('activate', event => {
             return Promise.all(
                 cacheNames.map(cacheName => {
                     if (cacheName !== CACHE_NAME) {
-                        console.log('Suppression ancien cache:', cacheName);
+                        console.log('🗑️ Suppression ancien cache:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
@@ -63,8 +64,26 @@ self.addEventListener('fetch', event => {
                 });
             })
             .catch(() => {
-                // En cas d'échec réseau, on peut retourner une page offline
-                return caches.match('/');
+                // En cas d'échec réseau, retourner une page d'erreur
+                return new Response(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Hors ligne</title>
+                        <style>
+                            body { font-family: sans-serif; padding: 20px; text-align: center; }
+                            h1 { color: #dc2626; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>⚠️ Hors ligne</h1>
+                        <p>L'application fonctionne en mode hors ligne.</p>
+                        <p>Veuillez vérifier votre connexion internet.</p>
+                    </body>
+                    </html>
+                `, {
+                    headers: { 'Content-Type': 'text/html' }
+                });
             })
     );
 });
