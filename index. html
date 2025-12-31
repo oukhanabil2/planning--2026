@@ -359,14 +359,21 @@
         </div>
         
         <nav class="nav-tabs">
-            <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
-            <button class="nav-tab" data-tab="planning">Planning</button>
-            <button class="nav-tab" data-tab="agents">Agents</button>
-            <button class="nav-tab" data-tab="add">Ajouter</button>
-            <button class="nav-tab" data-tab="conges">Congés</button>
-            <button class="nav-tab" data-tab="feries">Jours Fériés</button>
-            <button class="nav-tab" data-tab="stats">Statistiques</button>
-        </nav>
+    <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+    <button class="nav-tab" data-tab="planning">Planning</button>
+    <button class="nav-tab" data-tab="agents">Agents</button>
+    <button class="nav-tab" data-tab="add">Ajouter</button>
+    <button class="nav-tab" data-tab="absences">Congés/Absences</button>
+    <button class="nav-tab" data-tab="echanges">Échanges</button>
+    <button class="nav-tab" data-tab="stats">Statistiques</button>
+    <button class="nav-tab" data-tab="export">Export</button>
+    <button class="nav-tab" data-tab="radios">Radios</button>
+    <button class="nav-tab" data-tab="panique">Codes Panique</button>
+    <button class="nav-tab" data-tab="habillement">Habillement</button>
+    <button class="nav-tab" data-tab="avertissements">Avertissements</button>
+    <button class="nav-tab" data-tab="feries">Jours Fériés</button>
+    <button class="nav-tab" data-tab="outils">Outils</button>
+</nav>
         
         <!-- Dashboard Tab -->
         <div id="dashboard-tab" class="tab-content active">
@@ -569,7 +576,30 @@
                 installButton.style.display = 'none';
             }
         });
-        
+        <!-- Radios Tab -->
+<div id="radios-tab" class="tab-content">
+    <!-- Contenu généré dynamiquement -->
+</div>
+
+<!-- Codes Panique Tab -->
+<div id="panique-tab" class="tab-content">
+    <!-- Contenu généré dynamiquement -->
+</div>
+
+<!-- Habillement Tab -->
+<div id="habillement-tab" class="tab-content">
+    <!-- Contenu généré dynamiquement -->
+</div>
+
+<!-- Avertissements Tab -->
+<div id="avertissements-tab" class="tab-content">
+    <!-- Contenu généré dynamiquement -->
+</div>
+
+<!-- Outils Tab -->
+<div id="outils-tab" class="tab-content">
+    <!-- Contenu généré dynamiquement -->
+</div>
         // Vérifier si on est en PWA
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
             const installButton = document.getElementById('install-button');
